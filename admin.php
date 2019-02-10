@@ -1,0 +1,194 @@
+<?php
+//register.php
+ 
+/**
+ * Start the session.
+ */
+session_start();
+ 
+/**
+ * Include ircmaxell's password_compat library.
+ */
+
+ 
+/**
+ * Include our MySQL connection.
+ */
+require "php/connect.php";
+  
+//If the POST var "register" exists (our submit button), then we can
+//assume that the user has submitted the registration form.
+if(isset($_POST['register'])){
+    
+    //Retrieve the field values from our registration form.
+    $admins = !empty($_POST['admins']) ? trim($_POST['admins']) : null;
+    $pass = !empty($_POST['password']) ? trim($_POST['password']) : null;
+    $email = !empty($_POST['email']) ? trim($_POST['email']) : null;
+    //TO ADD: Error checking (username characters, password length, etc).
+    //Basically, you will need to add your own error checking BEFORE
+    //the prepared statement is built and executed.
+    
+    //Now, we need to check if the supplied username already exists.
+    
+    //Construct the SQL statement and prepare it.
+    $sql = "SELECT COUNT(admins) AS num FROM users WHERE admins = :admins";
+    $stmt = $pdo->prepare($sql);
+    
+    //Bind the provided username to our prepared statement.
+    $stmt->bindValue(':admins', $admins);
+    
+    //Execute.
+    $stmt->execute();
+    
+    //Fetch the row.
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    //If the provided username already exists - display error.
+    //TO ADD - Your own method of handling this error. For example purposes,
+    //I'm just going to kill the script completely, as error handling is outside
+    //the scope of this tutorial.
+    if($row['num'] > 0){
+        die('That username already exists!');
+    }
+    
+    //Hash the password as we do NOT want to store our passwords in plain text.
+    $passwordHash = password_hash($pass, PASSWORD_BCRYPT, array("cost" => 12));
+    
+    //Prepare our INSERT statement.
+    //Remember: We are inserting a new row into our users table.
+    $sql = "INSERT INTO users (admins, password, email) VALUES (:admins, :password, :email)";
+    $stmt = $pdo->prepare($sql);
+        
+    //Bind our variables.
+    $stmt->bindValue(':admins', $admins);
+    $stmt->bindValue(':password', $passwordHash);
+    $stmt->bindValue(':email', $email);
+ 
+    //Execute the statement and insert the new account.
+    $result = $stmt->execute();
+    
+    //If the signup process is successful.
+    if($result){
+        //What you do here is up to you!
+        echo 'Merci de votre inscription.';
+    }
+    
+}
+
+
+if(isset($_POST['login'])){
+    
+    //Retrieve the field values from our login form.
+    $admins = !empty($_POST['admins']) ? trim($_POST['admins']) : null;
+    $passwordAttempt = !empty($_POST['password']) ? trim($_POST['password']) : null;
+    $email = !empty($_POST['email']) ? trim($_POST['email']) : null;
+    
+    //Retrieve the user account information for the given username.
+    $sql = "SELECT id, admins, password, email FROM users WHERE admins = :admins";
+    $stmt = $pdo->prepare($sql);
+    
+    //Bind value.
+    $stmt->bindValue(':admins', $admins);
+    
+    //Execute.
+    $stmt->execute();
+    
+    //Fetch row.
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    //If $row is FALSE.
+    if($user === false){
+        //Could not find a user with that username!
+        //PS: You might want to handle this error in a more user-friendly manner!
+        die('Combinaison incorrecte nom / mot de passe !');
+    } else{
+        //User account found. Check to see if the given password matches the
+        //password hash that we stored in our users table.
+        
+        //Compare the passwords.
+        $validPassword = password_verify($passwordAttempt, $user['password']);
+        
+        //If $validPassword is TRUE, the login has been successful.
+        if($validPassword){
+            
+            //Provide the user with a login session.
+            $_SESSION['admin_id'] = $user['id'];
+            $_SESSION['logged_in'] = time();
+            
+            //Redirect to our protected page, which we called home.php
+            header('Location: admin.php');
+            exit;
+            
+        } else{
+            //$validPassword was FALSE. Passwords do not match.
+            die('Combinaison incorrecte nom / mot de passe !');
+        }
+    }
+    
+}
+ 
+?>
+<!DOCTYPE html>
+<html lang="fr" class="full-height">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="shortcut icon" href="" type="image/x-icon"/>
+    <title>Questionnaire</title>
+    <meta name="description" content="Questionnaire" >
+    <meta name="keywords" content="">
+    <meta name="author" content="Brodar Frédéric">
+    <meta name="publisher" content="Brodar Frédéric">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    </head>
+<body>  
+<div class="logo">
+<img src="img/logo.jpg" alt="logo">
+</div>
+<div class="main">
+<div class="register">
+    <h2>Enregistrement</h2>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+            <label for="admins">Administrareur</label>
+            <input type="text" id="admins" name="admins"><br>
+            <label for="password">Mot de passe</label>
+            <input type="text" id="password" name="password"><br>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email"><br>
+            <input type="submit" name="register" value="Inscription"></button>
+        </form>
+</div>
+        <div class="login">
+        <h2>Connexion</h2>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+            <label for="admins">Administrareur</label>
+            <input type="text" id="admins" name="admins"><br>
+            <label for="password">Mot de passe</label>
+            <input type="text" id="password" name="password"><br>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email"><br>
+            <input type="submit" name="login" value="Connexion">
+        </form>
+
+    </div>
+<div class="quest">
+
+
+
+        <footer>
+        <a href="logout-admin.php">Déconnexion</a><br>
+			<span class="lien"class="lien" href="#">Copyright © 2019 </span>
+			<a class="lien" href="">Mentions légale</a>
+		</footer>
+
+
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</body>
+</html>
