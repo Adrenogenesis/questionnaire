@@ -21,7 +21,7 @@ require "php/connect.php";
 if(isset($_POST['register'])){
     
     //Retrieve the field values from our registration form.
-    $admins = !empty($_POST['admins']) ? trim($_POST['admins']) : null;
+    $admins = !empty($_POST['username']) ? trim($_POST['username']) : null;
     $pass = !empty($_POST['password']) ? trim($_POST['password']) : null;
     $email = !empty($_POST['email']) ? trim($_POST['email']) : null;
     //TO ADD: Error checking (username characters, password length, etc).
@@ -31,11 +31,11 @@ if(isset($_POST['register'])){
     //Now, we need to check if the supplied username already exists.
     
     //Construct the SQL statement and prepare it.
-    $sql = "SELECT COUNT(admins) AS num FROM users WHERE admins = :admins";
+    $sql = "SELECT COUNT(username) AS num FROM users WHERE username = :username";
     $stmt = $pdo->prepare($sql);
     
     //Bind the provided username to our prepared statement.
-    $stmt->bindValue(':admins', $admins);
+    $stmt->bindValue(':username', $admins);
     
     //Execute.
     $stmt->execute();
@@ -56,11 +56,11 @@ if(isset($_POST['register'])){
     
     //Prepare our INSERT statement.
     //Remember: We are inserting a new row into our users table.
-    $sql = "INSERT INTO users (admins, password, email) VALUES (:admins, :password, :email)";
+    $sql = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
     $stmt = $pdo->prepare($sql);
         
     //Bind our variables.
-    $stmt->bindValue(':admins', $admins);
+    $stmt->bindValue(':username', $admins);
     $stmt->bindValue(':password', $passwordHash);
     $stmt->bindValue(':email', $email);
  
@@ -79,16 +79,16 @@ if(isset($_POST['register'])){
 if(isset($_POST['login'])){
     
     //Retrieve the field values from our login form.
-    $admins = !empty($_POST['admins']) ? trim($_POST['admins']) : null;
+    $admins = !empty($_POST['username']) ? trim($_POST['username']) : null;
     $passwordAttempt = !empty($_POST['password']) ? trim($_POST['password']) : null;
     $email = !empty($_POST['email']) ? trim($_POST['email']) : null;
     
     //Retrieve the user account information for the given username.
-    $sql = "SELECT id, admins, password, email FROM users WHERE admins = :admins";
+    $sql = "SELECT id, username, password, email FROM users WHERE username = :username";
     $stmt = $pdo->prepare($sql);
     
     //Bind value.
-    $stmt->bindValue(':admins', $admins);
+    $stmt->bindValue(':username', $admins);
     
     //Execute.
     $stmt->execute();
@@ -112,11 +112,11 @@ if(isset($_POST['login'])){
         if($validPassword){
             
             //Provide the user with a login session.
-            $_SESSION['admin_id'] = $user['id'];
+            $_SESSION['user_id'] = $user['id'];
             $_SESSION['logged_in'] = time();
             
             //Redirect to our protected page, which we called home.php
-            header('Location: admin.php');
+            header('Location: users.php');
             exit;
             
         } else{
@@ -159,9 +159,6 @@ if(isset($_POST['login'])){
         <li><a href="quest.php">Questionnaire</a></li>
         <li></li>
         <li></li>
-        <li><a href="categorie.php">Par catégories</a></li>
-                                <li></li>
-                                <li></li>
         <li><a href="users.php">Enregistrement</a></li>
         <li></li>
         <li></li>
@@ -169,7 +166,10 @@ if(isset($_POST['login'])){
 		</ul>
 </nav>
     </div>
-      <div class="title"><h1>Quiz administration</h1></div>
+      <div class="title"><h1>Quiz utilisateur.</h1>
+      <hr>
+     <h2><a href="quest.php">Accéder au Questionnaire</a></h2>
+    </div>
     <div class="login">
         <div class="enr">
     <h3>Enregistrement</h3>
@@ -239,7 +239,6 @@ if(isset($_POST['login'])){
 </div>
 <div class="quest">
         <footer>
-        <a href="index.php">Acceuil</a><br>
         <a href="logout-admin.php">Déconnexion</a><br>
 			<span class="lien"class="lien" href="#">Copyright © 2019 - BRODAR Frederic</span>
 			<a class="lien" href="">Mentions légale</a>

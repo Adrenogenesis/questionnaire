@@ -75,6 +75,8 @@ if($validPassword){
                     </nav>
                   </div>
                  <div class="quest">
+                 <div class="title"><h2>Quiz catégories</h2>
+      <hr></div>
                      <div class="quiz">
                             <?php
                             if(isset($_POST['Quest3'])){
@@ -100,69 +102,49 @@ if($validPassword){
                                 }
                             }
                             ?>
-                        <div class="Quest3">        
-                                      <?php
-                                        $stmt = $pdo->query("SELECT question1 FROM `qu1` WHERE `categorie` LIKE 'F%' ");
+                        <div class="Quest3">  
+                            
+                        <div class="selector" >
+        <select id="selectid" name="category" onchange="fx()">
+        <option id="Defaut" value="Defaut" selected>Catégorie</option>
+               <option id="logic" value="logic" onclick="qt1()">
+               <?php
+             $stmt = $pdo->query("SELECT * FROM `qu1` WHERE `categorie` LIKE 'F%' ");
+while ($row = $stmt->fetch()){ echo $row['categorie'];}?>
+</option>
+            <option id="language" value="language" onclick="qt2()"><?php
+             $stmt = $pdo->query("SELECT * FROM `qu1` WHERE `categorie` LIKE 'M%' ");
+while ($row = $stmt->fetch()){ echo $row['categorie'];}?>
+</option>
+            <option id="code" value="code" onclick="qt3()"><?php 
+            $stmt = $pdo->query("SELECT * FROM `qu1` WHERE `categorie` LIKE 'E%' ");
+while ($row = $stmt->fetch()){ echo $row['categorie'];}?>
+</option>
+        </select>
+</div>
 
-                                        while ($row = $stmt->fetch()){ 
-                                            $sel = $row['question1']; 
-                                                echo ' 
-                                                <form action="question.php?question='.$sel.'" method="post">
-                                                <select id="category1" name="category1" method="post" >
-                                                <option id="quts1" value="quts1" >'.$sel.'</option>
-                                                </select>
-                                                <input type="submit" value="Choisir"  name="Quest3">
-                                                </form>';
-                                                }
-                                              ?>            
-                                        <br>
-                        </div>                                     
-                                       <br>
-                            <h4>Veuillez vous connecter pour ajouter ou modifier une question !</h4>
-                            <br>
-                            <a href="index.php">Acceuil</a><br>
-                            <hr>
-                            </div class="loginuser">
-                                <div class="cnx">
-                                            <h3>Connexion</h3>
-                                            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-                                            <div class="row">
-                                        <div class="col-25">
-                                                <label for="username">Pseudo</label>
-                                        </div>
-                                        <div class="col-75">
-                                                <input type="text" id="username" name="username"><br>
-                                        </div>
-                                            </div>
-                                            <div class="row">
-                                        <div class="col-25">
-                                                <label for="password">Mot de passe</label>
-                                        </div>
-                                        <div class="col-75">
-                                                <input type="text" id="password" name="password"><br>
-                                        </div>
-                                            </div>
-                                            <div class="row">
-                                        <div class="col-25">
-                                                <label for="email">Email</label>
-                                        </div>
-                                        <div class="col-75">
-                                                <input type="email" id="email" name="email" required><br>
-                                        </div>
-                                            </div>
-                                            <div class="row">
-                                                <input type="submit" name="login" value="Connexion">
-                                            </div><br>
-                                            <div class="row">
-                                            <input type=button onClick="location.href='users.php'" value='Enregistrement'>
-                                            </div>
-                                            </form>
-                                      </div>
-                                <?php include 'newquest.php';?>
-                             </div>  
+<script type="text/javascript">
+function qt1(clicked)
+{
+    window.location = "quest1.php";
+	return false;
+}
+function qt2(clicked)
+{
+    window.location = "quest2.php";
+	return false;
+}
+function qt3(clicked)
+{
+    window.location = "quest3.php";
+	return false;
+}
+</script>
+        </div>   
+             </div>  
+               </div>
                       </div>
-                </div>
-        <footer>
+                         <footer>
                  <a href="logout_users.php">Déconnexion</a><br>
                       <span class="lien"class="lien" href="#">Copyright © 2019 - BRODAR Frederic</span>
                  <a class="lien" href="">Mentions légale</a>

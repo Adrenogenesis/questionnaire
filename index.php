@@ -5,12 +5,6 @@
  * Start the session.
  */
 session_start();
- 
-/**
- * Include ircmaxell's password_compat library.
- */
-
- 
 /**
  * Include our MySQL connection.
  */
@@ -74,10 +68,8 @@ if(isset($_POST['register'])){
     }
     
 }
-
  // login ------------------------------------------------------------------>
- 
- 
+  
 //If the POST var "login" exists (our submit button), then we can
 //assume that the user has submitted the login form.
 if(isset($_POST['login'])){
@@ -128,61 +120,121 @@ if(isset($_POST['login'])){
             die('Combinaison incorrecte nom / mot de passe !');
         }
     }
-    
 }
- 
-
-
-
-?>
+ ?>
 <!DOCTYPE html>
 <html lang="fr" class="full-height">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <link rel="shortcut icon" href="" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <title>Questionnaire</title>
     <meta name="description" content="Questionnaire" >
     <meta name="keywords" content="">
     <meta name="author" content="Brodar Frédéric">
     <meta name="publisher" content="Brodar Frédéric">
     <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/menu.css">
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     </head>
 <body>  
 <div class="logo">
 <img src="img/logo.jpg" alt="logo">
 </div>
-<div class="main">
-<div class="register">
-    <h2>Enregistrement</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-            <label for="username">Pseudo</label>
-            <input type="text" id="username" name="username"><br>
-            <label for="password">Mot de passe</label>
-            <input type="text" id="password" name="password"><br>
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email"><br>
-            <input type="submit" name="register" value="Inscription"></button>
-        </form>
-</div>
-        <div class="login">
-        <h2>Connexion</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-            <label for="username">Pseudo</label>
-            <input type="text" id="username" name="username"><br>
-            <label for="password">Mot de passe</label>
-            <input type="text" id="password" name="password"><br>
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email"><br>
-            <input type="submit" name="login" value="Connexion">
-        </form>
-
+<div class="container">
+    <div class="menu">
+<nav class="mobile-menu">
+<label for="show-menu" class="show-menu"><span>Menu</span><div class="lines"></div></label>
+	<input type="checkbox" id="show-menu">
+		<ul id="menu">
+		<li><a href="index.php">Acceuil</a></li>
+        <li><a href="quest.php">Questionnaire</a></li>
+        <li></li>
+        <li></li>
+        <li><a href="categorie.php">Par catégories</a></li>
+        <li></li>
+        <li></li>
+        <li><a href="users.php">Enregistrement</a></li>
+        <li></li>
+        <li></li>
+		<li><a href="admin.php">Administration</a></li>
+		</ul>
+</nav>
     </div>
-<div class="quest">
-
+      <div class="title"><h1>Quiz utilisateur</h1>
+      <hr>
+     <h2><a href="quest.php">Accéder au Questionnaire</a></h2>
+    </div>   
+    <div class="login">
+        <div class="enr">
+    <h3>Enregistrement</h3>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        <div class="row">
+    <div class="col-25">
+            <label for="username">Pseudo</label>
+    </div>
+    <div class="col-75">
+            <input type="text" id="username" name="username"><br>
+    </div>
+        </div>
+        <div class="row">
+    <div class="col-25">
+            <label for="password">Mot de passe</label>
+    </div>
+    <div class="col-75">
+            <input type="text" id="password" name="password"><br>
+    </div>
+        </div>
+        <div class="row">
+    <div class="col-25">
+            <label for="email">Email</label>
+    </div>
+    <div class="col-75">
+            <input type="email" id="email" name="email" required><br>
+    </div>
+        </div>
+        <div class="row">
+            <input type="submit" name="register" value="Inscription"></button>
+        </div>
+        </form>
+        </div>
+    <div class="cnx">
+        <h3>Connexion</h3>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        <div class="row">
+    <div class="col-25">
+            <label for="username">Pseudo</label>
+    </div>
+    <div class="col-75">
+            <input type="text" id="username" name="username"><br>
+    </div>
+        </div>
+        <div class="row">
+    <div class="col-25">
+            <label for="password">Mot de passe</label>
+    </div>
+    <div class="col-75">
+            <input type="text" id="password" name="password"><br>
+    </div>
+        </div>
+        <div class="row">
+    <div class="col-25">
+            <label for="email">Email</label>
+    </div>
+    <div class="col-75">
+            <input type="email" id="email" name="email" required><br>
+    </div>
+        </div>
+        <div class="row">
+            <input type="submit" name="login" value="Connexion"></button>
+        </div>
+        </form>
+    </div>
+</div>
+</div>
+      <div class="quest">
 <div class="selector" >
 		<select id="selectid" name="category" onchange="fx()">
 			<option id="Defaut" value="Defaut" selected>Catégorie</option>
@@ -198,19 +250,13 @@ while ($row = $stmt->fetch()){ echo $row['categorie'];}?></option>
 			<option id="code" value="code" onclick="qt3()"><?php $stmt = $pdo->query("SELECT * FROM `questionnaire` WHERE `categorie` LIKE 'Cod%' ");
 while ($row = $stmt->fetch()){ echo $row['categorie'];}?></option>
             </select>
-
 </div>
-          
-
-		
-
-        <footer>
+     <footer>
+     <a href="admin.php">Administration</a><br>
         <a href="logout.php">Déconnexion</a><br>
-			<span class="lien"class="lien" href="#">Copyright © 2019 </span>
+			<span class="lien"class="lien" href="#">Copyright © 2019 - BRODAR Frederic</span>
 			<a class="lien" href="">Mentions légale</a>
 		</footer>
-
-
 </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

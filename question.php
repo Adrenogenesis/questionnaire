@@ -1,29 +1,6 @@
 <?php
 require "php/connect.php";
-//home.php
- 
-/**
- * Start the session.
- */
-session_start();
- 
- 
-/**
- * Check if the user is logged in.
- */
-if(!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in'])){
-    //User not logged in. Redirect them back to the login.php page.
-    header('Location: login.php');
-    exit;
-}
- 
- 
-/**
- * Print out something that only logged in users can see.
- */
- 
-echo 'Vous êtes connecté!';
- 
+
 ?>
 <!DOCTYPE html>
 <html lang="fr" class="full-height">
@@ -41,7 +18,7 @@ echo 'Vous êtes connecté!';
     <link rel="stylesheet" href="css/menu.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     </head>
-<body>  
+<body> 
 <div class="logo">
 <img src="img/logo.jpg" alt="logo">
 </div>
@@ -62,45 +39,75 @@ echo 'Vous êtes connecté!';
 		</ul>
 </nav>
     </div>
-<div class="login">
-        <h1>Connexion</h1>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+<div class="quest">
+<div class="quiz">
+<?php
+if ( isset( $_GET['question'] ) && $_GET['question'] ) {
+     $choice = $_GET['question'];
+     //echo $choice;
+    } else {  
+        echo 'Erreur inconnue !';
+    }
+
+    echo $choice;
+    echo '
+    <form action="" method="post">
             <label for="username">Pseudo</label>
             <input type="text" id="username" name="username"><br>
-            <label for="password">Mot de passe</label>
-            <input type="text" id="password" name="password"><br>
-            <input type="email" id="email" name="email" required>
-            <label for="email">Email</label>
-            <input type="submit" name="login" value="Connexion">
-        </form>
+            <label for="réponse">Réponse</label>
+            <input type="text" name="inputType" id="inputType">
+            <input type="submit" value="submit"  name="Quest">
+      </form>';
 
-    </div>
-<div class="quest">
+      if(isset($_POST['Quest'])){
+    
+        $username = !empty($_POST['username']) ? trim($_POST['username']) : null;
+        $inputType = !empty($_POST['inputType']) ? trim($_POST['inputType']) : null;  
+      
+        $sql = "INSERT INTO Statutquiz (username, inputType) VALUES (:username, :inputType)";
+        
+        $stmt = $pdo->prepare($sql);
+      
+        $stmt->bindValue(':username', $username);
+        $stmt->bindValue(':inputType', $inputType);
+         
+        $result = $stmt->execute();
+    
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if($row['username'] > 1){
+            die('Vous avez déjà répondu à cette question !');
+        }
+       
+        if($result){
+          
+            echo 'Merci de votre participation !'.'<br>';
+        }
+     
+    }
 
-<div class="selector" >
-		<select id="selectid" name="category" onchange="fx()">
-			<option id="Defaut" value="Defaut" selected>Catégorie</option>
-            <option id="logic" value="logic" onclick="qt1()">
-            
-            <?php $stmt = $pdo->query("SELECT * FROM `questionnaire` WHERE `categorie` LIKE 'Log%' ");
-while ($row = $stmt->fetch()){ 
-    echo $row['categorie'];}?>
-
-</option>
-			<option id="language" value="language" onclick="qt2()"><?php $stmt = $pdo->query("SELECT * FROM `questionnaire` WHERE `categorie` LIKE 'Lan%' ");
-while ($row = $stmt->fetch()){ echo $row['categorie'];}?></option>
-			<option id="code" value="code" onclick="qt3()"><?php $stmt = $pdo->query("SELECT * FROM `questionnaire` WHERE `categorie` LIKE 'Cod%' ");
-while ($row = $stmt->fetch()){ echo $row['categorie'];}?></option>
-            </select>
-
+      if (isset ($_POST['inputType'])){
+      $reponse1 = $_POST['inputType'];
+        $stmt = $pdo->prepare("SELECT * FROM qu1 WHERE reponse1=?");
+        $stmt->execute([$reponse1]);
+            $username = $stmt->fetch();
+        if ($inputType === $reponse1 && $username) {
+            echo 'Bonne réponse '. ':' . '<br>' . $reponse1 . '<br>';
+   
+        } else {
+                  echo '<div class="flash-button">Mauvaise réponse !</div>';
+                }
+        }
+?>
+      <hr>
+     <h2><a href="quest.php">Retour</a></h2>
 </div>
-<a href="quest7.php">quest7</a><br>
-  <footer>
+</div>
+<footer>
+ <!-- Include JS file. -->
 <a href="logout.php">Déconnexion</a><br>
 			<span class="lien"class="lien" href="#">Copyright © 2019 - BRODAR Frederic</span>
 			<a class="lien" href="">Mentions légale</a>
 		</footer>
-</div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>

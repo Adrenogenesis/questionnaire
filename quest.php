@@ -75,6 +75,9 @@ if($validPassword){
                     </nav>
                   </div>
                  <div class="quest">
+                 <div class="title">
+                 <a href="categorie.php">Par catégories c'est par ici !</a><br></div>
+      <hr>
                      <div class="quiz">
                             <?php
                             if(isset($_POST['Quest3'])){
@@ -102,7 +105,7 @@ if($validPassword){
                             ?>
                         <div class="Quest3">        
                                       <?php
-                                        $stmt = $pdo->query("SELECT question1 FROM `qu1` WHERE `categorie` LIKE 'F%' ");
+                                        $stmt = $pdo->query("SELECT question1 FROM `qu1` ");
 
                                         while ($row = $stmt->fetch()){ 
                                             $sel = $row['question1']; 
