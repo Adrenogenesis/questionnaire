@@ -1,1 +1,0 @@
-<img src="display.php?id=1  width="300" height="300" />
